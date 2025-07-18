@@ -59,9 +59,6 @@ async function init() {
         console.log("❌ SESSION STORE ERROR", e);
     });
 
-    console.log("DB URL:", process.env.ATLASDB_URL);
-
-
     const sessionOptions = {
         store,
         secret,

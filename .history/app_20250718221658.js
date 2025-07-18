@@ -1,6 +1,7 @@
-require("dotenv").config();
-console.log("✅ .env loaded regardless of NODE_ENV");
-
+if (process.env.NODE_ENV !== "production") {
+    require("dotenv").config();
+    console.log("✅ Loaded .env");
+}
 
 const express = require("express");
 const mongoose = require("mongoose");
@@ -59,9 +60,6 @@ async function init() {
         console.log("❌ SESSION STORE ERROR", e);
     });
 
-    console.log("DB URL:", process.env.ATLASDB_URL);
-
-
     const sessionOptions = {
         store,
         secret,
@@ -102,7 +100,7 @@ async function init() {
     });
 
     // 404 handler
-    app.all("/*splat", (req, res, next) => {
+    app.all("/*", (req, res, next) => {
         next(new ExpressError("Page Not Found", 404));
     });
 

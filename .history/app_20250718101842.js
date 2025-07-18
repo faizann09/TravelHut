@@ -100,7 +100,7 @@ app.get("/", (req, res) => {
 });
 
 // 404 handler
-app.all("/*splat", (req, res, next) => {
+app.all("/*", (req, res, next) => {
     next(new ExpressError("Page Not Found", 404));
 });
 

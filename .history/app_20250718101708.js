@@ -1,7 +1,6 @@
 // Load environment variables from .env file if not in production
 if (process.env.NODE_ENV !== "production") {
-    require("dotenv").config();
-    console.log("✅ Loaded ATLASDB_URL from .env:", process.env.ATLASDB_URL);
+    require('dotenv').config();
 }
 
 // Required modules
@@ -11,7 +10,7 @@ const path = require("path");
 const methodOverride = require("method-override");
 const ejsMate = require("ejs-mate");
 const session = require("express-session");
-const MongoStore = require("connect-mongo");
+const MongoStore = require('connect-mongo');
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
@@ -20,14 +19,18 @@ const User = require("./models/user.js");
 
 // Routers
 const listingsRouter = require("./routes/listing.js");
-const reviewsRouter = require("./routes/review.js");
+const reviewsRouter = require('./routes/review.js');
 const userRouter = require("./routes/user.js");
 
 // Initialize app
 const app = express();
 
-// MongoDB connection
+// MongoDB connection (Atlas only)
 const dbUrl = process.env.ATLASDB_URL;
+
+// ✅ Debug log to verify environment variable
+console.log("✅ Loaded ATLASDB_URL from .env:", dbUrl);
+
 async function main() {
     try {
         await mongoose.connect(dbUrl);
@@ -37,6 +40,7 @@ async function main() {
         process.exit(1); // Stop the app if DB doesn't connect
     }
 }
+
 main();
 
 // View engine and middleware setup
@@ -53,7 +57,7 @@ const store = MongoStore.create({
     crypto: {
         secret: process.env.SECRET || "thisshouldbeabettersecret",
     },
-    touchAfter: 24 * 3600, // seconds
+    touchAfter: 24 * 3600, // time period in seconds
 });
 
 store.on("error", function (e) {
@@ -82,7 +86,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Middleware to make flash & user data available in views
+// Flash and user info in locals
 app.use((req, res, next) => {
     res.locals.message = req.flash("success");
     res.locals.error = req.flash("error");

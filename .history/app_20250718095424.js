@@ -25,20 +25,19 @@ const userRouter = require("./routes/user.js");
 // Initialize app
 const app = express();
 
-// MongoDB connection (Atlas only)
-const dbUrl = process.env.ATLASDB_URL;
+// MongoDB connection (LOCAL or ATLAS)
+const dbUrl = process.env.ATLASDB_URL ||;
+
+main()
+    .then(() => console.log("MongoDB connected successfully"))
+    .catch((err) => console.error("MongoDB connection error:", err));
 
 async function main() {
-    try {
-        await mongoose.connect(dbUrl);
-        console.log("✅ MongoDB connected successfully");
-    } catch (err) {
-        console.error("❌ MongoDB connection error:", err);
-        process.exit(1); // Stop the app if DB doesn't connect
-    }
+    await mongoose.connect(dbUrl, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
 }
-
-main();
 
 // View engine and middleware setup
 app.set("view engine", "ejs");
@@ -51,14 +50,12 @@ app.use(express.static(path.join(__dirname, "/public")));
 // Session configuration
 const store = MongoStore.create({
     mongoUrl: dbUrl,
-    crypto: {
-        secret: process.env.SECRET || "thisshouldbeabettersecret",
-    },
-    touchAfter: 24 * 3600, // time period in seconds
+    crypto: { secret: process.env.SECRET || "thisshouldbeabettersecret" },
+    touchAfter: 24 * 3600,
 });
 
 store.on("error", function (e) {
-    console.log("❌ SESSION STORE ERROR", e);
+    console.log("SESSION STORE ERROR", e);
 });
 
 const sessionOptions = {
@@ -68,7 +65,7 @@ const sessionOptions = {
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        expires: Date.now() + 1000 * 60 * 60 * 24 * 7, // 1 week
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
         maxAge: 1000 * 60 * 60 * 24 * 7,
     },
 };
@@ -96,25 +93,29 @@ app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewsRouter);
 app.use("/", userRouter);
 
+
 app.get("/", (req, res) => {
-    res.redirect("/listings");
+  res.redirect("/listings");
 });
 
 // 404 handler
-app.all("*", (req, res, next) => {
+app.all("/*splat", (req, res, next) => {
     next(new ExpressError("Page Not Found", 404));
 });
 
+
+
+
 // General error handler
 app.use((err, req, res, next) => {
-    const status = err.status || 500;
-    if (res.headersSent) return next(err); // avoid double render
-    res.status(status).render("error", { err });
+  const status = err.status || 500;
+  res.status(status).render("error", { err });
+
 });
+
 
 // Server listener
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });
-

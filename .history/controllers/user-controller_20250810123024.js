@@ -10,17 +10,14 @@ module.exports.userSignup = async (req, res, next) => {
   try {
     const { username, email, password } = req.body;
 
-    // Validate fields
     if (!username || !email || !password) {
       req.flash("error", "All fields are required!");
       return res.redirect("/signup");
     }
 
-    // Create and register user
     const newUser = new User({ email, username });
     const registeredUser = await User.register(newUser, password);
 
-    // Automatically log in the user
     req.login(registeredUser, (err) => {
       if (err) {
         console.error("Login after signup error:", err);
@@ -32,13 +29,7 @@ module.exports.userSignup = async (req, res, next) => {
 
   } catch (e) {
     console.error("Signup error:", e);
-    let errorMessage = e.message || "Something went wrong during signup.";
-
-    // More user-friendly duplicate email/username error handling
-    if (e.name === "UserExistsError") {
-      errorMessage = "Username already taken. Please choose another.";
-    }
-    req.flash("error", errorMessage);
+    req.flash("error", e.message || "Something went wrong during signup.");
     res.redirect("/signup");
   }
 };

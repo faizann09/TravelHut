@@ -59,7 +59,7 @@ async function init() {
     store,
     secret,
     resave: false,
-    saveUninitialized: false,
+    saveUninitialized: false, // ✅ avoids unnecessary empty sessions
     cookie: {
       httpOnly: true,
       expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
@@ -77,13 +77,7 @@ async function init() {
   passport.serializeUser(User.serializeUser());
   passport.deserializeUser(User.deserializeUser());
 
-  // Global locals (after flash is enabled)
-  app.use((req, res, next) => {
-    res.locals.message = req.flash("success")[0] || null;
-    res.locals.error = req.flash("error")[0] || null;
-    res.locals.currUser = req.user;
-    next();
-  });
+  
 
   // Routes
   app.use("/listings", listingsRouter);

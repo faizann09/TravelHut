@@ -1,0 +1,68 @@
+<% layout("./layouts/boilerplate") %>
+
+
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 rounded-4" style="background-color: #ffffff;">
+        <div class="card-body p-5">
+          <h2 class="text-center mb-4" style="color: black;">Sign Up to <span style="color: #ff5a5f;">TravelHut</span></h2>
+          <form class="needs-validation" novalidate action="/signup" method="POST">
+            <div class="mb-3">
+              <label for="username" class="form-label fw-semibold">Username</label>
+              <input
+                name="username"
+                id="username"
+                type="text"
+                class="form-control rounded-3"
+                placeholder="Enter your username"
+                required
+              />
+              <div class="invalid-feedback">Please enter a username!</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="email" class="form-label fw-semibold">Email</label>
+              <input
+                name="email"
+                id="email"
+                type="email"
+                class="form-control rounded-3"
+                placeholder="you@example.com"
+                required
+              />
+              <div class="invalid-feedback">Please enter a valid email!</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="password" class="form-label fw-semibold">Password</label>
+              <input
+                name="password"
+                id="password"
+                type="password"
+                class="form-control rounded-3"
+                placeholder="Enter a strong password"
+                required
+              />
+              <div class="invalid-feedback">Please enter a password!</div>
+            </div>
+
+            <div class="d-grid">
+              <button class="btn" style="background-color: #ff5a5f; color: white;" type="submit">
+                Sign Up
+              </button>
+            </div>
+          </form>
+
+          <p class="mt-4 text-center text-muted">
+            Already have an account? <a href="/login" class="text-decoration-none" style="color: #ff5a5f;">Log in</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<br>
+<br>

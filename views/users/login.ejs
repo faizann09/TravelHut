@@ -1,0 +1,35 @@
+<% layout("./layouts/boilerplate") %>
+
+
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card border-0 shadow-lg rounded-4 p-4">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold" style="font-family: 'Plus Jakarta Sans', sans-serif;">Welcome Back</h2>
+                    <p class="text-muted" style="font-size: 0.95rem;">Enter your credentials to log in</p>
+                </div>
+                <form class="needs-validation" novalidate action="/login" method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label fw-semibold">Username</label>
+                        <input name="username" id="username" type="text" class="form-control rounded-3" required />
+                        <div class="invalid-feedback">Please enter your username</div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label fw-semibold">Password</label>
+                        <input name="password" id="password" type="password" class="form-control rounded-3" required />
+                        <div class="invalid-feedback">Please enter your password</div>
+                    </div>
+                    <div class="d-grid">
+                        <button class="btn btn-success btn-lg rounded-3 fw-semibold" style="background-color: #ff5a5f;" type="submit" >Login</button>
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    <small class="text-muted">Don't have an account? <a href="/signup" class="text-success fw-semibold text-decoration-none">Sign up</a></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,17 @@
+<% if (message && message.length > 0) { %>
+    <div class="alert alert-success alert-dismissible fade show shadow-lg rounded-3 px-4 py-3 text-center col-lg-6 mx-auto my-3" role="alert">
+        <i class="fa-solid fa-circle-check me-2"></i>
+        <strong><%= message %></strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } %>
+
+<% if (error && error.length > 0) { %>
+    <div class="alert alert-danger alert-dismissible fade show shadow-lg rounded-3 px-4 py-3 text-center col-lg-6 mx-auto my-3" role="alert">
+        <i class="fa-solid fa-triangle-exclamation me-2"></i>
+        <strong><%= error %></strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+<% } %>
+
+  

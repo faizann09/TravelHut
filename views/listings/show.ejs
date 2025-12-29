@@ -1,0 +1,150 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="row">
+    <!-- Listing Card -->
+    <div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 show-card">
+        <h3 class="mb-4"><%= listing.title %></h3>
+
+        <div class="card listing-card" data-price="₹<%= listing.price?.toLocaleString('en-IN') %>/night">
+            <img src="<%= listing.image?.url || listing.image %>" class="card-img-top show-img" alt="listing-image">
+            <div class="card-img-overlay"></div>
+            <div class="card-body">
+                <p class="card-text">
+                    <b>Owned by <i><%= listing.owner?.username || "Unknown" %></i></b><br>
+                    <span class="text-muted"><%= listing.description %></span><br>
+                    <span class="fw-semibold">₹<%= listing.price?.toLocaleString("en-IN") %> / night</span><br>
+                    <span class="text-muted"><%= listing.location %>, <%= listing.country %></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Owner-only Buttons -->
+<% if (currUser && String(currUser._id) === String(listing.owner._id || listing.owner)) { %>
+    <div class="btns col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-4">
+        <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark add-btn">Edit</a>
+        <form method="POST" action="/listings/<%= listing._id %>?_method=DELETE" style="display:inline;">
+            <button class="btn btn-outline-danger">Delete</button>
+        </form>
+    </div>
+<% } %>
+
+<!-- Leave a Review Form -->
+<div class="col-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mt-5 mb-5 review-form-wrapper">
+    <hr>
+
+    <% if (currUser) { %>
+        <div class="p-4 rounded bg-light shadow-sm">
+            <h4 class="mb-4 text-center">Leave a Review</h4>
+            <form action="/listings/<%= listing._id %>/reviews" method="POST" novalidate class="needs-validation">
+                
+                <div class="mb-4">
+                    <label for="rating" class="form-label fw-semibold">Rating</label>
+                    <input 
+                        type="range" 
+                        min="1" 
+                        max="5" 
+                        name="review[rating]" 
+                        id="rating" 
+                        class="form-range" 
+                        oninput="updateSliderValue(this.value)">
+                    <div class="text-center mt-2">
+                        <span id="sliderValue" class="badge bg-danger fs-5">3</span> / 5
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="comment" class="form-label fw-semibold">Comment</label>
+                    <textarea 
+                        name="review[comment]" 
+                        id="comment" 
+                        rows="4" 
+                        class="form-control" 
+                        required 
+                        placeholder="Write your thoughts here..."></textarea>
+                    <div class="invalid-feedback">Please add a comment for the review.</div>
+                </div>
+
+                <div class="text-center">
+                    <button class="btn btn-dark px-4" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    <% } %>
+</div>
+
+<!-- All Reviews -->
+<% if (listing.reviews && listing.reviews.length) { %>
+    <hr class="my-5">
+    <h4 class="mb-4 text-center">All Reviews</h4>
+
+    <div class="container">
+        <div class="row justify-content-center row-cols-1 row-cols-md-2 g-4">
+            <% for (let review of listing.reviews) { %>
+                <div class="col mb-4" style="max-width: 300px;">
+                    <div class="card review-card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold mb-2">
+                                @<%= review.author?.username || "Anonymous" %>
+                            </h5>
+                            <p class="card-text text-muted mb-2" style="font-size: 0.95rem;">
+                                <%= review.comment %>
+                            </p>
+                            <p class="card-text text-warning fw-bold mb-3">
+                                ⭐ <%= review.rating %> / 5
+                            </p>
+                            <form method="POST" action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE">
+                                <button class="btn btn-outline-danger btn-sm w-100">Delete Review</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+    </div>
+<% } %>
+
+<!-- Scoped CSS for Review Form -->
+<style>
+.review-form-wrapper input[type="range"]::-webkit-slider-thumb {
+    background-color: #dc3545;
+}
+.review-form-wrapper input[type="range"]::-moz-range-thumb {
+    background-color: #dc3545;
+}
+.review-form-wrapper input[type="range"]::-webkit-slider-runnable-track {
+    background: #f1b0b7;
+}
+.review-form-wrapper input[type="range"]:hover::-webkit-slider-thumb {
+    background-color: #c82333;
+}
+</style>
+
+<!-- JS for slider + Bootstrap validation -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const slider = document.getElementById('rating');
+        const output = document.getElementById('sliderValue');
+        if (slider && output) {
+            output.innerText = slider.value;
+            slider.addEventListener('input', function () {
+                output.innerText = this.value;
+            });
+        }
+
+        (() => {
+            'use strict';
+            const forms = document.querySelectorAll('.needs-validation');
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        })();
+    });
+</script>
